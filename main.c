@@ -7,6 +7,6 @@ int main(void){
 	while(1==1){
 		TIM1->CCR1 = 2000;
 		TIM1->CCR2 = 2000;
-		TIM1->CCR3 = 300;
+		TIM1->CCR3 = 2000;
 	}
 }
