@@ -7,16 +7,16 @@
 #define TIM_CCMR1_CC1S_OUTPUT 0
 
 void led_init(void){
-	
+	//User led
 	RCC->AHB1ENR |= RCC_AHB1ENR_GPIOCEN;	
 	GPIOC->MODER = (GPIO_MODER_OUTPUT << GPIO_MODER_MODE13_Pos) | (GPIO_MODER_OUTPUT << GPIO_MODER_MODE14_Pos);
 	GPIOC->ODR |= GPIO_ODR_OD13;
 	GPIOC->ODR &= ~GPIO_ODR_OD14;
-	
+	//RGB led
 	RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN;
 	GPIOA->MODER |= (GPIO_MODER_ALTARNATE << GPIO_MODER_MODE8_Pos) | (GPIO_MODER_ALTARNATE << GPIO_MODER_MODE9_Pos) | (GPIO_MODER_ALTARNATE << GPIO_MODER_MODE10_Pos);
 	GPIOA->AFR[1] |= GPIO_AFRH_AFRH0_0 | GPIO_AFRH_AFRH1_0 | GPIO_AFRH_AFRH2_0;
-	
+	//pwm
 	RCC->APB2ENR |= RCC_APB2ENR_TIM1EN;
 	TIM1->PSC = 0;
 	TIM1->ARR = 10000; // 10 kHz
@@ -31,3 +31,8 @@ void led_init(void){
 	TIM1->CR1 |= TIM_CR1_CEN;
 }
 
+void ledShowRgb(uint8_t red, uint8_t green, uint8_t blue){
+	TIM1->CCR1 = (red/255)*10000; // red
+	TIM1->CCR2 = (green/255)*10000; // green
+	TIM1->CCR3 = (blue/255)*10000; // blue
+}

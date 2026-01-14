@@ -5,8 +5,6 @@ int main(void){
 	led_init();
 	GPIOC->ODR &= ~GPIO_ODR_OD13;
 	while(1==1){
-		TIM1->CCR1 = 2000;
-		TIM1->CCR2 = 2000;
-		TIM1->CCR3 = 2000;
+		ledShowRgb(0,211,255);
 	}
 }
