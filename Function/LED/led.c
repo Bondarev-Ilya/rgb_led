@@ -32,7 +32,74 @@ void led_init(void){
 }
 
 void ledShowRgb(uint8_t red, uint8_t green, uint8_t blue){
-	TIM1->CCR1 = (red/255)*10000; // red
-	TIM1->CCR2 = (green/255)*10000; // green
-	TIM1->CCR3 = (blue/255)*10000; // blue
+	TIM1->CCR1 = ((float)red/255.0f)*10000; // red
+	TIM1->CCR2 = ((float)green/255.0f)*10000; // green
+	TIM1->CCR3 = ((float)blue/255.0f)*10000; // blue
 }
+
+void ledShowHsv(uint16_t hue, uint8_t saturation, uint8_t value){
+	//Cheking the limits
+	if(hue>=360){
+		hue = 0;
+	}
+	if(saturation>100){
+		saturation = 100;
+	}
+	if(value>100){
+		value = 100;
+	}
+	
+	//Rationing
+	float hue_f = (float)hue;
+	float sat_f = saturation/100.0f;
+	float value_f = value/100.0f;
+	
+	//Intermediate variables
+	float C = value_f*sat_f;
+	float X = C*(1.0f-fabs((fmod((hue_f/60.0f),2))-1.0f));
+	float m = value_f-sat_f;
+	
+	//Sector definition
+	float red_f = 0.0f;
+	float green_f = 0.0f;
+	float blue_f = 0.0f;
+	if(hue>=0 && 60>hue){
+		red_f = C;
+		green_f = X;
+		blue_f = 0.0f;
+	}
+	if(hue>=60 && 120>hue){
+		red_f = X;
+		green_f = C;
+		blue_f = 0.0f;
+	}
+	if(hue>=120 && 180>hue){
+		red_f = 0.0f;
+		green_f = C;
+		blue_f = X;
+	}
+	if(hue>=180 && 240>hue){
+		red_f = 0.0f;
+		green_f = X;
+		blue_f = C;
+	}
+	if(hue>=240 && 300>hue){
+		red_f = X;
+		green_f = 0.0f;
+		blue_f = C;
+	}
+	if(hue>=300 && 360>hue){
+		red_f = C;
+		green_f = 0.0f;
+		blue_f = X;
+	}
+	//Switching to RGB
+	uint8_t red = (uint8_t)((red_f+m)*255.0f);
+	uint8_t green = (uint8_t)((green_f+m)*255.0f);
+	uint8_t blue = (uint8_t)((blue_f+m)*255.0f);
+	ledShowRgb(red,green,blue);
+}
+
+
+
+
